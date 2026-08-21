@@ -58,16 +58,23 @@ Regras de Segurança:
 - Lembre que intervenções em quadros de alta potência exigem profissionais habilitados.
 """
 
+# Verificar se a chave foi configurada nos Secrets ou no Ambiente
+secret_key = st.secrets.get("GEMINI_API_KEY") if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets else os.environ.get("GEMINI_API_KEY")
+
 with st.sidebar:
     st.title("⚡ EletroAgent")
     st.caption("Assistente Inteligente de Esquemas e Painéis Elétricos")
     
-    api_key_input = st.text_input(
-        "Gemini API Key:",
-        type="password",
-        value=os.environ.get("GEMINI_API_KEY", ""),
-        help="Insira sua chave da API do Google Gemini (ou defina a variável GEMINI_API_KEY)"
-    )
+    if secret_key:
+        st.success("🔒 Chave de API ativa no servidor!")
+        api_key_input = secret_key
+    else:
+        api_key_input = st.text_input(
+            "Gemini API Key:",
+            type="password",
+            placeholder="Cole sua chave aqui...",
+            help="Insira sua chave da API do Google Gemini"
+        )
     
     st.divider()
     st.subheader("📋 Regras Rápidas de Segurança")
